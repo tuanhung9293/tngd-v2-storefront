@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  storefront:
+    container_name: tngd-v2-storefront
+    build:
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SALEOR_API_URL: ${NEXT_PUBLIC_SALEOR_API_URL}
+        NEXT_PUBLIC_STOREFRONT_URL: ${NEXT_PUBLIC_STOREFRONT_URL}
+    restart: always
+    ports:
+      - 3033:3000
+    networks:
+      - storefront_network
+
+  # Add more containers below (nginx, postgres, etc.)
+
+networks:
+  storefront_network:
+    external: false
