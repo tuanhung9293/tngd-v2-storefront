@@ -24,8 +24,8 @@ jobs:
             cd /root/data/tngd-v3-storefront-prod
 
             echo "📦 Pull latest changes"
-            git fetch origin sale-session
-            git reset --hard origin/sale-session
+            git fetch origin test-mon-08-dec-25-p3
+            git reset --hard origin/test-mon-08-dec-25-p3
 
             echo "⚙️ Write .env file"
             cat > .env <<EOF
