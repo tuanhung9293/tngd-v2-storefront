@@ -1,22 +1,9 @@
-version: "3"
+version: "3.8"
 
 services:
   storefront:
     container_name: tngd-v2-storefront
-    build:
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_SALEOR_API_URL: ${NEXT_PUBLIC_SALEOR_API_URL}
-        NEXT_PUBLIC_STOREFRONT_URL: ${NEXT_PUBLIC_STOREFRONT_URL}
-        NEXT_PUBLIC_DEFAULT_CHANNEL: ${NEXT_PUBLIC_DEFAULT_CHANNEL}
+    image: ghcr.io/tuanhung9293/tngd-v2-storefront:prod
     restart: always
     ports:
-      - 3033:3000
-    networks:
-      - storefront_network
-
-  # Add more containers below (nginx, postgres, etc.) test
-
-networks:
-  storefront_network:
-    external: false
+      - "3033:3000"

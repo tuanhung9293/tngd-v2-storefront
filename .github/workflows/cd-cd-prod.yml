@@ -1,19 +1,17 @@
 name: 🚀 Deploy Storefront PROD
 
 on:
-  push:
-    branches:
-      - sale-session
+  workflow_run:
+    workflows: ["🏗 Build & Push Storefront Image"]
+    types:
+      - completed
 
 jobs:
-  deploy-prod:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧩 Checkout Code
-        uses: actions/checkout@v3
-
-      - name: 🚀 Deploy to PROD VPS
+      - name: 🚀 Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -23,21 +21,16 @@ jobs:
             set -e
             cd /root/data/tngd-v3-storefront-prod
 
-            echo "📦 Pull latest changes"
-            git fetch origin sale-session
-            git reset --hard origin/sale-session
+            echo "🔐 Login GHCR"
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
 
-            echo "⚙️ Write .env file"
-            cat > .env <<EOF
-            NEXT_PUBLIC_SALEOR_API_URL=${{ vars.NEXT_PUBLIC_SALEOR_API_URL_PROD }}
-            NEXT_PUBLIC_STOREFRONT_URL=${{ vars.NEXT_PUBLIC_STOREFRONT_URL_PROD }}
-            NEXT_PUBLIC_DEFAULT_CHANNEL=default-channel
-            EOF
+            echo "⬇️ Pull latest image"
+            docker compose pull
 
-            echo "🧹 Clean old containers & images"
-            docker system prune -af
+            echo "🚀 Restart container"
+            docker compose up -d
 
-            echo "🐳 Build & start container"
-            docker compose -f docker-compose-prod.yml up --build -d
+            echo "🧹 Cleanup old images"
+            docker image prune -f
 
-            echo "✅ Storefront deployed successfully!"
+            echo "✅ Deployed successfully"
